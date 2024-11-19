@@ -3,9 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Library</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
-    
+    <div id="header">
+        <h1>The Library</h1>
+        <button id="add-newbook-btn">Add New Book +</button>
+    </div>
+    <dialog>
+        <h1>Add New Book</h1>
+        <form method="dialog">
+            <label for="new-title">Title</label>
+            <input type="text" name="title" id="new-title" required>
+            <label for="new-author">Author</label>
+            <input type="text" name="author" id="new-author" required>
+            <label for="new-pages">Pages</label>
+            <input type="text" name="pages" id="new-pages" required>
+            <label for="new-read">Read?</label>
+            <input type="checkbox" name="read" id="new-read" required>
+            <button type="submit" id="add-btn">Add</button>
+            <button type="button" id="dialog-close">Close</button>
+        </form>
+    </dialog>
+    <div id="container">
+    </div>
 </body>
 </html>
