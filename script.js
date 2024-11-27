@@ -10,11 +10,13 @@ function Book(author, title, pages, readStatus) {
 function addBookToLibrary(author, title, pages, readStatus) {
     const book = new Book(author, title, pages, readStatus);
     myLibrary.push(book);
+    saveLibraryToLocalStorage(); // Save library to localStorage after adding a book
 }
 
 function displayBooks() {
+    const divContainer = document.querySelector("#container");
+    divContainer.innerHTML = '';  // Clear existing cards before displaying new ones
     myLibrary.forEach(function(book, index) {
-        const divContainer = document.querySelector("#container");
         const cardElement = document.createElement("div");
         cardElement.classList.add("card");
         const titleElement = document.createElement("div");
@@ -30,7 +32,7 @@ function displayBooks() {
         const deleteDivElement = document.createElement("div");
         deleteDivElement.classList.add("delete");
         const deleteBtnElement = document.createElement("button");
-        deleteBtnElement.classList.add("delete-btn") //create elements and add their classes
+        deleteBtnElement.classList.add("delete-btn");
 
         divContainer.appendChild(cardElement);
         cardElement.appendChild(titleElement);
@@ -39,46 +41,40 @@ function displayBooks() {
         cardElement.appendChild(readDivElement);
         readDivElement.appendChild(readBtnElement);
         cardElement.appendChild(deleteDivElement);
-        deleteDivElement.appendChild(deleteBtnElement); //add elements to dom;
+        deleteDivElement.appendChild(deleteBtnElement);
 
         titleElement.textContent = book.title;
         authorElement.textContent = `by ${book.author}`;
         pagesElement.textContent = `${book.pages} pages`;
         readBtnElement.textContent = book.readStatus ? "Read" : "Not Read";
-        deleteBtnElement.textContent = "Remove"; //add contents to the elements 
+        deleteBtnElement.textContent = "Remove";
 
-        //added event listeners to modify read status and remove button
         readBtnElement.addEventListener("click", () => {
-            if(book.readStatus) {
-                book.readStatus = false;
-                readBtnElement.textContent = "Not Read";
-            } else {
-                book.readStatus = true;
-                readBtnElement.textContent = "Read";
-            }
+            book.readStatus = !book.readStatus;
+            readBtnElement.textContent = book.readStatus ? "Read" : "Not Read";
+            saveLibraryToLocalStorage(); // Save after updating status
         });
 
         deleteBtnElement.addEventListener("click", () => {
             cardElement.remove();
             myLibrary.splice(index, 1);
+            saveLibraryToLocalStorage(); // Save after removal
         });
-    })
-}
-
-function clearFields () {
-    const allInputs = document.querySelectorAll("input");
-    allInputs.forEach(x => {
-        x.value = "";
-        x.checked = false;
     });
 }
 
-function clearCards () {
-    const allCards = document.querySelectorAll(".card");
-    allCards.forEach(x => {
-        x.remove();
-    });
+function saveLibraryToLocalStorage() {
+    localStorage.setItem('library', JSON.stringify(myLibrary));
 }
+
+function loadLibraryFromLocalStorage() {
+    const storedLibrary = JSON.parse(localStorage.getItem('library'));
+    if (storedLibrary) {
+        storedLibrary.forEach(book => addBookToLibrary(book.author, book.title, book.pages, book.readStatus));
+    }
+}
+
+window.onload = loadLibraryFromLocalStorage;
 
 const addBookBtn = document.querySelector("#add-newbook-btn").addEventListener("click", () => {
     document.querySelector("dialog").showModal();
@@ -89,21 +85,16 @@ const closeAddBookBtn = document.querySelector("#dialog-close").addEventListener
     clearFields();
 });
 
-const addBook = document.querySelector("form").addEventListener("submit", (event) => {
+const addBookForm = document.querySelector("form").addEventListener("submit", (event) => {
     event.preventDefault();
     const title = document.querySelector("#new-title").value;
     const author = document.querySelector("#new-author").value;
     const pages = parseInt(document.querySelector("#new-pages").value);
     const readStatus = document.querySelector("#new-read").checked;
-    addBookToLibrary(author, title, pages, readStatus);
-    clearCards();
-    displayBooks();
-    clearFields();
-});
 
-addBookToLibrary("Charles Dickens", "A Tale Of Two Cities", 440, false);
-addBookToLibrary("Antoine de Saint-Exupéry", "The Little Prince (Le Petit Prince)", 96, true);
-addBookToLibrary("Paulo Coelho", "The Alchemist (O Alquimista)", 208, false);
-addBookToLibrary("J. K. Rowling", "Harry Potter and the Philosopher's Stone", 	309, true);
-
-displayBooks();
+    if (title && author && !isNaN(pages) && pages > 0) {
+        addBookToLibrary(author, title, pages, readStatus);
+        displayBooks();
+        clearFields();
+    }
+})
