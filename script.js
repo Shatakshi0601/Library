@@ -10,12 +10,12 @@ function Book(author, title, pages, readStatus) {
 function addBookToLibrary(author, title, pages, readStatus) {
     const book = new Book(author, title, pages, readStatus);
     myLibrary.push(book);
-    saveLibraryToLocalStorage(); // Save library to localStorage after adding a book
+    saveLibraryToLocalStorage(); 
 }
 
 function displayBooks() {
     const divContainer = document.querySelector("#container");
-    divContainer.innerHTML = '';  // Clear existing cards before displaying new ones
+    divContainer.innerHTML = ''; 
     myLibrary.forEach(function(book, index) {
         const cardElement = document.createElement("div");
         cardElement.classList.add("card");
@@ -52,13 +52,13 @@ function displayBooks() {
         readBtnElement.addEventListener("click", () => {
             book.readStatus = !book.readStatus;
             readBtnElement.textContent = book.readStatus ? "Read" : "Not Read";
-            saveLibraryToLocalStorage(); // Save after updating status
+            saveLibraryToLocalStorage(); 
         });
 
         deleteBtnElement.addEventListener("click", () => {
             cardElement.remove();
             myLibrary.splice(index, 1);
-            saveLibraryToLocalStorage(); // Save after removal
+            saveLibraryToLocalStorage(); 
         });
     });
 }
